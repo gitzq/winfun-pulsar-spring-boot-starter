@@ -51,6 +51,8 @@ public class MultiPulsarProperties {
      */
     private Map<String,Integer> ioThreads;
 
+    private Map<String,Integer> maxPendingMessages;
+
     /**
      * 是否开启TCP不延迟
      */
@@ -67,6 +69,10 @@ public class MultiPulsarProperties {
      * IO线程数
      */
     private Integer defaultIoThreads=1;
+    /**
+     * producter 处理队列最大大小
+     */
+    private Integer defaultMaxPendingMessages = 1000;
 
     /**
      * 根据数据源名称获取 pulsar服务地址
@@ -150,5 +156,12 @@ public class MultiPulsarProperties {
             return this.defaultIoThreads;
         }
         return this.ioThreads.getOrDefault(sourceName,this.defaultIoThreads);
+    }
+
+    public Integer getMaxPendingMessages(String sourceName){
+        if (CollectionUtils.isEmpty(this.maxPendingMessages)){
+            return this.defaultMaxPendingMessages;
+        }
+        return this.maxPendingMessages.getOrDefault(sourceName,this.defaultMaxPendingMessages);
     }
 }
