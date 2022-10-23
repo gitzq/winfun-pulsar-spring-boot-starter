@@ -1,5 +1,6 @@
 package io.github.howinfun.template;
 
+import cn.hutool.json.JSONUtil;
 import io.github.howinfun.client.CustomerPulsarClient;
 import io.github.howinfun.client.MultiPulsarClient;
 import io.github.howinfun.ececption.PulsarBusinessException;
@@ -135,8 +136,11 @@ public class PulsarTemplate {
             }
         }
 
+        public <T> CompletableFuture<MessageId> sendAsync(T data) throws PulsarClientException{
+            return this.sendAsync(JSONUtil.toJsonStr(data));
+        }
 
-        public <T> CompletableFuture<MessageId> sendAsync(T data) throws PulsarClientException {
+        public <T> CompletableFuture<MessageId> sendAsync(String data) throws PulsarClientException {
 
             String finalTopic = this.generateTopic();
             String sourceName = StringUtils.isNotBlank(this.sourceName) ? this.sourceName : MultiPulsarProperties.DEFAULT_SOURCE_NAME;
