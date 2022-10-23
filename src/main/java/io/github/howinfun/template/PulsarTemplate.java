@@ -27,13 +27,13 @@ import org.springframework.stereotype.Component;
  * @author winfun
  **/
 @Slf4j
-public class PulsarTemplate<T> {
+public class PulsarTemplate {
 
     /**
      * producer 缓存
      * key：topic，value：producer
      */
-    private final ConcurrentHashMap<String, Producer<T>> producerCaches = new ConcurrentHashMap<>(64);
+    private final ConcurrentHashMap<String, Producer> producerCaches = new ConcurrentHashMap<>(64);
     /**
      * 多数据源Pulsar客户端
      */
