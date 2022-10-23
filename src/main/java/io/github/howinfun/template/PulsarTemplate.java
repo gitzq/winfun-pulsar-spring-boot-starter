@@ -153,7 +153,7 @@ public class PulsarTemplate {
                         throw new PulsarBusinessException("[Pulsar] 数据源对应PulsarClient不存在！");
                     }
                     producer = client.getClient()
-                            .newProducer(JSONSchema.of(data.getClass()))
+                            .newProducer(Schema.STRING)
                             .blockIfQueueFull(this.blockIfQueueFull)
                             .maxPendingMessages(client.getMaxPendingMessages())
                             .topic(finalTopic)
