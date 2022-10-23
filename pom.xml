@@ -4,18 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.howinfun</groupId>
+    <groupId>io.github.gitzq</groupId>
     <artifactId>winfun-pulsar-spring-boot-starter</artifactId>
-    <version>1.2.0</version>
+    <version>1.0.0</version>
     <name>winfun-pulsar-spring-boot-starter</name>
     <description>统一封装pulsar</description>
-    <url>https://github.com/Howinfun/winfun-pulsar-spring-boot-starter</url>
+    <url>https://github.com/gitzq/winfun-pulsar-spring-boot-starter</url>
 
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-        <lombok.version>1.18.10</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
         <hutool.version>5.4.2</hutool.version>
         <pulsar-client.version>2.6.1</pulsar-client.version>
         <sl4j-api.version>1.7.30</sl4j-api.version>
@@ -82,16 +82,16 @@
 
     <developers>
         <developer>
-            <name>Howinfun</name>
-            <email>876237770@qq.com</email>
-            <url>https://github.com/Howinfun</url>
+            <name>zhangkoe</name>
+            <email>604176621@qq.com</email>
+            <url>https://github.com/gitzq</url>
         </developer>
     </developers>
 
     <scm>
-        <url>https://github.com/Howinfun/winfun-pulsar-spring-boot-starter</url>
-        <connection>https://github.com/Howinfun/winfun-pulsar-spring-boot-starter.git</connection>
-        <developerConnection>https://github.com/Howinfun</developerConnection>
+        <url>https://github.com/gitzq/winfun-pulsar-spring-boot-starter</url>
+        <connection>https://github.com/gitzq/winfun-pulsar-spring-boot-starter.git</connection>
+        <developerConnection>https://github.com/gitzq</developerConnection>
     </scm>
 
     <distributionManagement>
@@ -145,16 +145,27 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.1</version>
+                <version>1.5</version>
                 <executions>
                     <execution>
-                        <id>sign-artifacts</id>
+                        <id>ossrh</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
             </plugin>
         </plugins>
     </build>

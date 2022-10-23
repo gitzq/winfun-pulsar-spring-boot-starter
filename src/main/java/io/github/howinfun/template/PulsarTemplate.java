@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
  * @author winfun
  **/
 @Slf4j
-@Component
 public class PulsarTemplate<T> {
 
     /**

@@ -36,7 +36,6 @@ import org.springframework.util.CollectionUtils;
  * @author winfun
  **/
 @Slf4j
-@Component
 public class PulsarConsumerAutoConfigure implements CommandLineRunner {
 
     /**

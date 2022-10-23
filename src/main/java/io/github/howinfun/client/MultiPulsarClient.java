@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
  * @date 2021/9/1 9:17 上午
  **/
 @Slf4j
-@Component
 public class MultiPulsarClient extends HashMap<String, CustomerPulsarClient> implements DisposableBean {
 
     public MultiPulsarClient(MultiPulsarProperties multiPulsarProperties) {
