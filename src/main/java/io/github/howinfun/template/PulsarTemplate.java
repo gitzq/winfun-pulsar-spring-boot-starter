@@ -136,36 +136,62 @@ public class PulsarTemplate {
             }
         }
 
-        public <T> CompletableFuture<MessageId> sendAsync(T data) throws PulsarClientException{
+        public MessageId sendPartition(String msg, String key) throws Exception {
+            try {
+                MessageId messageId = this.sendAsyncPartition(msg, key).get();
+                log.info("[Pulsar] Producer同步发送消息成功，msg is {}", msg);
+                return messageId;
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("[Pulsar] Producer同步发送消息失败，msg is {}", msg);
+                throw e;
+            }
+        }
+
+        public <T> CompletableFuture<MessageId> sendAsync(T data) throws PulsarClientException {
             return this.sendAsync(JSONUtil.toJsonStr(data));
         }
 
-        public <T> CompletableFuture<MessageId> sendAsync(String data) throws PulsarClientException {
+        public CompletableFuture<MessageId> sendAsync(String data) throws PulsarClientException {
 
             String finalTopic = this.generateTopic();
-            String sourceName = StringUtils.isNotBlank(this.sourceName) ? this.sourceName : MultiPulsarProperties.DEFAULT_SOURCE_NAME;
             try {
-                Producer producer = PulsarTemplate.this.producerCaches.getOrDefault(finalTopic, null);
-                if (Objects.isNull(producer)) {
-                    CustomerPulsarClient client = PulsarTemplate.this.multiPulsarClient.getOrDefault(sourceName, null);
-                    if (Objects.isNull(client)) {
-                        log.error("[Pulsar] 数据源对应PulsarClient不存在，sourceName is {}", sourceName);
-                        throw new PulsarBusinessException("[Pulsar] 数据源对应PulsarClient不存在！");
-                    }
-                    producer = client.getClient()
-                            .newProducer(Schema.STRING)
-                            .blockIfQueueFull(this.blockIfQueueFull)
-                            .maxPendingMessages(client.getMaxPendingMessages())
-                            .topic(finalTopic)
-                            .create();
-                    PulsarTemplate.this.producerCaches.put(finalTopic, producer);
-                    log.info("[Pulsar] Producer实例化成功，sourceName is {}, topic is {}", sourceName, finalTopic);
-                }
-                return producer.sendAsync(data);
+                return buildProducer(finalTopic).sendAsync(data);
             } catch (Exception e) {
                 log.error("[Pulsar] Producer实例化失败，topic is {}", finalTopic);
                 throw e;
             }
+        }
+
+        public CompletableFuture<MessageId> sendAsyncPartition(String data, String key) throws PulsarClientException {
+
+            String finalTopic = this.generateTopic();
+            try {
+                return buildProducer(finalTopic).newMessage().key(key).value(data).sendAsync();
+            } catch (Exception e) {
+                log.error("[Pulsar] Producer实例化失败，topic is {}", finalTopic);
+                throw e;
+            }
+        }
+
+        private Producer buildProducer(String finalTopic) throws PulsarClientException {
+            Producer producer = PulsarTemplate.this.producerCaches.getOrDefault(finalTopic, null);
+            String sourceName = StringUtils.isNotBlank(this.sourceName) ? this.sourceName : MultiPulsarProperties.DEFAULT_SOURCE_NAME;
+            if (Objects.isNull(producer)) {
+                CustomerPulsarClient client = PulsarTemplate.this.multiPulsarClient.getOrDefault(sourceName, null);
+                if (Objects.isNull(client)) {
+                    log.error("[Pulsar] 数据源对应PulsarClient不存在，sourceName is {}", sourceName);
+                    throw new PulsarBusinessException("[Pulsar] 数据源对应PulsarClient不存在！");
+                }
+                producer = client.getClient()
+                        .newProducer(Schema.STRING)
+                        .blockIfQueueFull(this.blockIfQueueFull)
+                        .maxPendingMessages(client.getMaxPendingMessages())
+                        .topic(finalTopic)
+                        .create();
+                PulsarTemplate.this.producerCaches.put(finalTopic, producer);
+                log.info("[Pulsar] Producer实例化成功，sourceName is {}, topic is {}", sourceName, finalTopic);
+            }
+            return producer;
         }
 
         /**
